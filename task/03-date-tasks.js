@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+    return Date.parse(value);
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   return Date.parse(value);
 }
 
 
@@ -56,7 +56,16 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+    var year = date.getFullYear();
+    var isLeap = true;
+    if (year % 4 !== 0) {
+        isLeap = false;
+    } else if (year % 100 !== 0) {
+        isLeap = true
+    } else if (year % 400 !== 0) {
+        isLeap = false
+    }
+   return isLeap;
 }
 
 
@@ -76,7 +85,13 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+    var millisBetween = endDate.getTime() - startDate.getTime();
+    var hours = '0' + Math.floor(millisBetween / 1000 / 60 / 60);
+    var minutes = '0' + Math.floor((millisBetween - hours * 3600000) / 60000);
+    var seconds = '0' + Math.floor((millisBetween - hours * 3600000 - minutes * 60000) / 1000);
+    var millis = '00' + (millisBetween - hours * 3600000 - minutes * 60000 - seconds * 1000);
+
+   return `${hours.substring(hours.length - 2)}:${minutes.substring(minutes.length - 2)}:${seconds.substring(seconds.length - 2)}.${millis.substring(millis.length - 3)}`;
 }
 
 
@@ -94,7 +109,11 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+    var dateGMT = new Date(date.valueOf() + date.getTimezoneOffset() * 60000)
+    var hourHandDegrees = dateGMT.getHours() * 30 + dateGMT.getMinutes() * 0.5;
+    var minuteHandDegrees = dateGMT.getMinutes() * 6;
+    hourHandDegrees = hourHandDegrees > 360 ? hourHandDegrees - Math.floor(hourHandDegrees / 360) * 360 : hourHandDegrees;
+    return (Math.abs(hourHandDegrees - minuteHandDegrees) > 180 ? Math.abs(hourHandDegrees - minuteHandDegrees) - 180 : Math.abs(hourHandDegrees - minuteHandDegrees)) / 180 * Math.PI;
 }
 
 
